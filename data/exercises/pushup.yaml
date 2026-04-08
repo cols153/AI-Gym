@@ -44,3 +44,13 @@ smoothing:
     - body_alignment_angle
     - hip_angle
     - knee_angle
+
+rep_phase:
+  angle_column: elbow_angle_smooth
+  bottom_threshold: 90
+  top_threshold: 140
+  labels:
+    bottom: bottom
+    top: top
+    transition: transition
+    unknown: unknown
