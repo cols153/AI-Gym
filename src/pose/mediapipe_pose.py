@@ -5,9 +5,20 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 from mediapipe.tasks.python.vision import drawing_utils, drawing_styles
 
+
 MODEL_URL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task"
 MODEL_PATH = "data/models/pose_landmarker.task"
-
+LANDMARK_NAMES = [
+    "nose", "left_eye_inner", "left_eye", "left_eye_outer",
+    "right_eye_inner", "right_eye", "right_eye_outer",
+    "left_ear", "right_ear", "mouth_left", "mouth_right",
+    "left_shoulder", "right_shoulder", "left_elbow", "right_elbow",
+    "left_wrist", "right_wrist", "left_pinky", "right_pinky",
+    "left_index", "right_index", "left_thumb", "right_thumb",
+    "left_hip", "right_hip", "left_knee", "right_knee",
+    "left_ankle", "right_ankle", "left_heel", "right_heel",
+    "left_foot_index", "right_foot_index",
+]
 
 class MediaPipePose:
     def __init__(self):
@@ -23,12 +34,34 @@ class MediaPipePose:
         self.detector = vision.PoseLandmarker.create_from_options(options)
 
     def _ensure_model(self):
-        os.makedirs("models", exist_ok=True)
+        os.makedirs("data/models", exist_ok=True)
         if not os.path.exists(MODEL_PATH):
             urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
 
     def detect(self, mp_image, timestamp_ms):
-        return self.detector.detect_for_video(mp_image, timestamp_ms)
+
+        result = self.detector.detect_for_video(mp_image, timestamp_ms)
+
+        return result
+
+
+    def _to_landmarks(self, result):
+        if result is None or not result.pose_landmarks:
+            return None
+
+        landmarks = result.pose_landmarks[0]
+        pose_dict = {}
+
+        for i, name in enumerate(LANDMARK_NAMES):
+            lm = landmarks[i]
+            pose_dict[name] = {
+                "x": lm.x,
+                "y": lm.y,
+                "z": getattr(lm, "z", np.nan),
+                "visibility": getattr(lm, "visibility", np.nan),
+            }
+
+        return pose_dict
 
     def draw(self, mp_image, detection_result):
         return self.draw_landmarks_on_image(mp_image.numpy_view(), detection_result)

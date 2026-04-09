@@ -4,10 +4,10 @@ from pathlib import Path
 import streamlit as st
 from aiortc.contrib.media import MediaRecorder
 from streamlit_webrtc import WebRtcMode, webrtc_streamer
-from pipeline.pipeline import run_video_pipeline
 
-from pipeline.pose.pose_processor import PoseProcessor
-from pipeline.pose.mediapipe_pose import MediaPipePose
+
+from src.pose.pose_processor import PoseProcessor
+from src.pose.mediapipe_pose import MediaPipePose
 
 
 def render_tab_analyze():
@@ -63,7 +63,8 @@ def render_input_view():
             return
 
         with st.spinner("Processing video..."):
-            output_video, results = run_video_pipeline(video_path, draw, model, mode)
+            output_video = None
+            results = None
 
         st.session_state.analyze_output_video = output_video
         st.session_state.analyze_results = results
@@ -128,7 +129,7 @@ def render_record_source():
         key="pushup-recorder",
         mode=WebRtcMode.SENDRECV,
         video_processor_factory=lambda: PoseProcessor(
-            pipe=pipe,
+            pose=pipe,
             width=480,
             height=360,
             detect_every_n_frames=2,

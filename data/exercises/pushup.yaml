@@ -1,49 +1,6 @@
 exercise: pushup
 
-visibility:
-  visibility_score:
-    joints: [shoulder, elbow, wrist, hip, knee, ankle]
 
-angles:
-  elbow_angle:
-    points: [shoulder, elbow, wrist]
-
-  body_alignment_angle:
-    points: [shoulder, hip, ankle]
-
-  hip_angle:
-    points: [shoulder, hip, knee]
-
-  knee_angle:
-    points: [hip, knee, ankle]
-
-distances:
-  shoulder_wrist_dist:
-    points: [shoulder, wrist]
-
-  hip_ankle_dist:
-    points: [hip, ankle]
-
-  shoulder_hip_dist:
-    points: [shoulder, hip]
-
-  elbow_wrist_dist:
-    points: [elbow, wrist]
-
-  upper_arm_length:
-    points: [shoulder, elbow]
-
-ratios:
-  torso_leg_ratio:
-    numerator: shoulder_hip_dist
-    denominator: hip_ankle_dist
-
-smoothing:
-  signals:
-    - elbow_angle
-    - body_alignment_angle
-    - hip_angle
-    - knee_angle
 
 rep_phase:
   angle_column: elbow_angle_smooth
@@ -54,3 +11,7 @@ rep_phase:
     top: top
     transition: transition
     unknown: unknown
+
+  model:
+    path_2d: data/models/pushup_2d.joblib
+    path_3d: data/models/pushup_3d.joblib
