@@ -133,7 +133,6 @@ class Pipeline:
         model_path = MODEL_2D_PATH if self.mode == 2 else MODEL_3D_PATH
         return joblib.load(model_path)
     
-
     def _to_landmarks(self, result):
         if result is None or not result.pose_landmarks:
             return None

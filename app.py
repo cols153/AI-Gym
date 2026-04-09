@@ -31,7 +31,6 @@ def coach_speak(text):
         time.sleep(0.05)
 
 
-
 left, center, right = st.columns([1, 2, 1])
 
 with center:
@@ -44,7 +43,6 @@ with center:
     with col2:    
         coach_text = st.empty()
         coach_speak("Hey, I am your coach. Lets get started with the push-up training!")
-
 
     state = get_state()
 
