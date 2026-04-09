@@ -9,8 +9,6 @@ def extract(pose_result, mode):
     # Extract features    
     features = _extract(pose_result, side, mode)
 
-    print(features)
-
     return features
 
 # Helper to select side
@@ -59,11 +57,15 @@ def _extract(pose_result, side, mode):
     # Phase
     phase = _estimate_phase(elbow_angle)
 
+    # Coach message
+    feedback = _give_feedback(elbow_angle, body_angle, hip_angle, phase)
+
     return {
         "elbow_angle": elbow_angle,
         "body_angle": body_angle,
         "hip_angle": hip_angle,
         "phase": phase,
+        "coach": feedback,
     }
 
 # Math helpers
@@ -91,8 +93,19 @@ def _compute_angle(a, b, c, dims):
     return np.degrees(np.arccos(cosine))
 
 def _get_point(row, side, joint, dims):
-    axes = ["x", "y"] if dims == 2 else ["x", "y", "z"]
-    return [row.get(f"{side}_{joint}_{axis}", np.nan) for axis in axes]
+    landmark = row.get(f"{side}_{joint}")
+
+    if landmark is None:
+        return None
+
+    if dims == 2:
+        return [landmark.get("x", np.nan), landmark.get("y", np.nan)]
+
+    return [
+        landmark.get("x", np.nan),
+        landmark.get("y", np.nan),
+        landmark.get("z", np.nan),
+    ]
 
 # Phase helper
 def _estimate_phase(elbow_angle):
@@ -103,3 +116,20 @@ def _estimate_phase(elbow_angle):
     if elbow_angle > 140:
         return "top"
     return "transition"
+
+def _give_feedback(elbow, body, hip, phase):
+    messages = []
+
+    if body < 150:
+        messages.append("Back not straight")
+    if hip < 150:
+        messages.append("Hips too high")
+    if body < 135:
+        messages.append("Hips too low")
+    if elbow > 110 and phase in ["bottom", "transition"]:
+        messages.append("Not low enough")
+
+    if not messages:
+        return "Keep going"
+
+    return " | ".join(messages)

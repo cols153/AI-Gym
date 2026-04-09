@@ -12,7 +12,7 @@ class PoseProcessor(VideoProcessorBase):
         self.state = state
         self.mode = mode
 
-        # self.pipe = Pipeline(mode=self.mode, state=self.state)
+        self.pipe = Pipeline(mode=self.mode, state=self.state)
 
     def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
         image_bgr = frame.to_ndarray(format="bgr24")
@@ -30,7 +30,7 @@ class PoseProcessor(VideoProcessorBase):
         if result is not None:
             
             # Add frame detection to pipeline 
-            # self.pipe.submit(result)
+            self.pipe.submit(result)
 
             # Draw on image
             annotated_rgb = self.pose.draw(mp_image, result)

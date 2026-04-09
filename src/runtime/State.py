@@ -9,6 +9,7 @@ class State:
     incorrect_reps: int = 0
     last_prediction: str | None = None
     last_confidence: float | None = None
+    feedback: str = ""
     history: list = field(default_factory=list)
     lock: threading.Lock = field(default_factory=threading.Lock)
 
@@ -20,5 +21,6 @@ class State:
                 "incorrect_reps": self.incorrect_reps,
                 "status": self.last_prediction,
                 "confidence": self.last_confidence,
+                "feedback": self.feedback,
                 "history": list(self.history),
             }

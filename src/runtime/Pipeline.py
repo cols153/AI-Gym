@@ -2,6 +2,7 @@ import queue
 import threading
 import joblib
 import pandas as pd
+import numpy as np
 
 from src.runtime.Counter import Counter
 from src.feature.frame_features import extract
@@ -9,6 +10,18 @@ from src.feature.sequence_features import transform
 
 MODEL_2D_PATH = "data/models/pushup_2d.joblib"
 MODEL_3D_PATH = "data/models/pushup_3d.joblib"
+
+LANDMARK_NAMES = [
+    "nose", "left_eye_inner", "left_eye", "left_eye_outer",
+    "right_eye_inner", "right_eye", "right_eye_outer",
+    "left_ear", "right_ear", "mouth_left", "mouth_right",
+    "left_shoulder", "right_shoulder", "left_elbow", "right_elbow",
+    "left_wrist", "right_wrist", "left_pinky", "right_pinky",
+    "left_index", "right_index", "left_thumb", "right_thumb",
+    "left_hip", "right_hip", "left_knee", "right_knee",
+    "left_ankle", "right_ankle", "left_heel", "right_heel",
+    "left_foot_index", "right_foot_index",
+]
 
 class Pipeline:
     def __init__(self, mode, state):
@@ -50,14 +63,24 @@ class Pipeline:
 
     # Logic for processing frame
     def process(self, result):
-        
+
+        # Transform to general
+        general = self._to_landmarks(result)
+
+        if general is None:
+            return
+  
         # Transform to features
-        frame_features = extract(result, self.mode)
+        frame_features = extract(general, self.mode)
 
         # Store current frame
         self.sequence.append(frame_features)
 
-        # Then update counter logic
+        # Give feedback
+        feedback = frame_features["coach"]
+        self._update_feedback(feedback)
+
+        # Update counter logic
         phase = frame_features["phase"]
         complete = self.counter.update(phase)
 
@@ -101,7 +124,30 @@ class Pipeline:
                 "confidence": confidence,
             })
 
+    def _update_feedback(self, feedback):
+        with self.state.lock:
+            self.state.feedback = feedback
+
 
     def _load_model(self):
         model_path = MODEL_2D_PATH if self.mode == 2 else MODEL_3D_PATH
         return joblib.load(model_path)
+    
+
+    def _to_landmarks(self, result):
+        if result is None or not result.pose_landmarks:
+            return None
+
+        landmarks = result.pose_landmarks[0]
+        pose_dict = {}
+
+        for i, name in enumerate(LANDMARK_NAMES):
+            lm = landmarks[i]
+            pose_dict[name] = {
+                "x": lm.x,
+                "y": lm.y,
+                "z": getattr(lm, "z", np.nan),
+                "visibility": getattr(lm, "visibility", np.nan),
+            }
+
+        return pose_dict
