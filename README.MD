@@ -38,3 +38,4 @@ Allow webcam access when prompted.
 - Python 3.10 is required (compatibility with streamlit-webrtc)
 - Make sure your webcam is enabled
 - Stand far enough from the camera for proper pose detection 🙂
+- The models used in this app were developed in the [posture_checker_offline](./posture_checker_offline) module, which contains the full pipeline for pose processing, feature engineering, and model training
