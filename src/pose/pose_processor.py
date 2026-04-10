@@ -6,15 +6,24 @@ import mediapipe as mp
 from streamlit_webrtc import VideoProcessorBase
 from src.runtime.Pipeline import Pipeline
 
+
 class PoseProcessor(VideoProcessorBase):
     def __init__(self, pose, state, mode=2):
         self.pose = pose
         self.state = state
         self.mode = mode
 
-        self.pipe = Pipeline(mode=self.mode, state=self.state)
+        # Lazy init
+        self.pipe = None
+
+    def _ensure_pipeline(self):
+        if self.pipe is None:
+            self.pipe = Pipeline(mode=self.mode, state=self.state)
 
     def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
+        # Ensure pipeline is loaded only when needed
+        self._ensure_pipeline()
+
         image_bgr = frame.to_ndarray(format="bgr24")
         image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
 
@@ -28,8 +37,7 @@ class PoseProcessor(VideoProcessorBase):
 
         # Pose detected
         if result is not None:
-            
-            # Add frame detection to pipeline 
+            # Add frame detection to pipeline
             self.pipe.submit(result)
 
             # Draw on image
