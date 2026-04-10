@@ -1,1 +1,9 @@
-ÿþ
+streamlit
+streamlit-webrtc
+mediapipe
+opencv-python
+joblib
+scikit-learn
+numpy
+av
+aiortc
