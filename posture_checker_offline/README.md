@@ -1,30 +1,30 @@
-# 🏋️ Push-up Posture Checker
+# Push-up Posture Checker
 
-## 🎥 Demo
+## Demo
 
-Comparison of pose estimation methods:
+Comparison of two pose estimation approaches:
 
 * **MediaPipe** (fast, local)
 * **MMPose** (GPU-based)
 
-👉 [▶️ Watch demo video](https://github.com/cols153/posture_checker/releases/download/v1.0/annotated_comparison_side_by_side.mp4)
+[Watch demo video](https://github.com/Hayo87/AI-Gym/releases/download/v1.0/annotated_comparison_side_by_side.mp4)
 
 ---
 
-## 📌 Overview
+## Overview
 
-This project implements a complete pipeline to analyze **push-up posture** using computer vision and machine learning.
+This project implements a complete pipeline to analyze push-up posture using computer vision and machine learning.
 
 The system:
 
 * extracts body pose from videos
 * engineers meaningful biomechanical features
-* classifies push-up quality (**correct / incorrect**)
+* classifies push-up quality (correct / incorrect)
 * provides visual and textual feedback
 
 ---
 
-## ⚙️ Pipeline
+## Pipeline
 
 ### 1. Pose Estimation
 
@@ -34,7 +34,7 @@ Two approaches are used:
 
   * fast and lightweight
   * runs locally in real time
-  * provides 2D landmarks + pseudo-3D world coordinates
+  * provides 2D landmarks + approximate 3D world coordinates
 
 * **MMPose**
 
@@ -57,6 +57,8 @@ Transforms raw pose data into structured features:
 * posture consistency
 * movement dynamics
 
+See report for full feature description.
+
 Outputs:
 
 * `data/processed/*.csv`
@@ -67,13 +69,13 @@ Outputs:
 
 Three approaches are compared:
 
-* **Rule-based**
-* **Logistic Regression (baseline)**
-* **MLP (neural network)**
+* Rule-based
+* Logistic Regression (baseline)
+* MLP (neural network)
 
 Tasks:
 
-* classify push-ups as **correct / incorrect**
+* classify push-ups as correct / incorrect
 * detect posture issues
 
 ---
@@ -93,14 +95,14 @@ Outputs:
 
 ---
 
-## 🧠 Trained Models
+## Trained Models
 
 The project includes trained machine learning pipelines based on MediaPipe features:
 
-* **MLP (2D features)**
+* MLP (2D features)
   → `models/mlp_pipeline_mediapipe_2d.joblib`
 
-* **MLP (3D features)**
+* MLP (3D features)
   → `models/mlp_pipeline_mediapipe_3d.joblib`
 
 Each pipeline includes:
@@ -119,7 +121,7 @@ model = joblib.load("models/mlp_pipeline_mediapipe_2d.joblib")
 
 ---
 
-## 🔁 Integration with Real-Time App
+## Integration with Real-Time App
 
 These models are designed to be used in a real-time pipeline:
 
@@ -127,22 +129,27 @@ These models are designed to be used in a real-time pipeline:
 * feature extraction → custom pipeline
 * inference → trained model (`joblib`)
 
-⚠️ Note: the real-time Streamlit application is developed separately.
+Note: the real-time Streamlit application is developed separately.
+The final system uses a hybrid approach:
+- MLP models for posture classification
+- rule-based logic for repetition counting and feedback generation
+
+This ensures both robustness and interpretability in real-time.
 
 ---
 
-## 📊 Key Insights
+## Key Insights
 
-* **MediaPipe provides more stable and interpretable features**
-* **MMPose features are noisier and require more processing**
-* **Rule-based methods remain strong baselines**
-* **ML models benefit more from 3D than rule-based approaches**
-* **3D does not always outperform 2D** — depends on pose estimation quality
-* **MediaPipe offers the best trade-off between performance, speed, and usability**
+* MediaPipe provides more stable and interpretable features
+* MMPose features are noisier and require more processing
+* Rule-based methods remain strong baselines
+* ML models can benefit from 3D representations, but this depends on pose estimation quality.
+* 3D does not always outperform 2D — depends on pose estimation quality
+* MediaPipe offers the best trade-off between performance, speed, and usability
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 posture_checker_offline/
@@ -188,7 +195,7 @@ posture_checker_offline/
 
 ---
 
-## ▶️ Usage
+## Usage
 
 Run the notebooks in order:
 
@@ -209,7 +216,7 @@ Run the notebooks in order:
 
 ---
 
-## 📦 Dataset
+## Dataset
 
 This project uses the following dataset:
 
@@ -222,7 +229,7 @@ The dataset is used for educational and non-commercial purposes only.
 
 ---
 
-## ⚠️ Notes
+## Notes
 
 * MMPose notebooks require **Google Colab (GPU)**
 * MediaPipe runs locally and is significantly faster
@@ -231,6 +238,6 @@ The dataset is used for educational and non-commercial purposes only.
 
 ---
 
-## 👤 Author
+## Author
 
 Project developed as part of the **Deep Neural Engineering** course.
