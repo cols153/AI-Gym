@@ -38,7 +38,7 @@ class PoseProcessor(VideoProcessorBase):
         # Pose detected
         if result is not None:
             # Add frame detection to pipeline
-            self.pipe.submit(result)
+            self.pipe.submit(result) # type: ignore
 
             # Draw on image
             annotated_rgb = self.pose.draw(mp_image, result)
