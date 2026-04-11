@@ -2,9 +2,9 @@ import time
 import streamlit as st
 from streamlit_webrtc import WebRtcMode, webrtc_streamer
 
-from src.pose.pose_processor import PoseProcessor
-from src.pose.mediapipe_pose import MediaPipePose
-from src.runtime.State import State
+from pose_processor import PoseProcessor
+from mediapipe_pose import MediaPipePose
+from State import State
 
 st.set_page_config(
     page_title="Push-up trainer",

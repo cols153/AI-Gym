@@ -3,10 +3,12 @@ import threading
 import joblib
 import pandas as pd
 import numpy as np
+from collections import deque
 
-from src.runtime.Counter import Counter
-from src.feature.frame_features import extract
-from src.feature.sequence_features import transform
+from Counter import Counter
+from features import extract, transform
+from coach import estimate_phase, give_feedback
+
 
 MODEL_2D_PATH = "data/models/pushup_2d.joblib"
 MODEL_3D_PATH = "data/models/pushup_3d.joblib"
@@ -33,6 +35,7 @@ class Pipeline:
         self._stop_event = threading.Event()
         self.sequence = []
         self.counter = Counter()
+        self.phase_window = deque(maxlen=5)
 
         # load model once
         self.model = self._load_model()
@@ -73,16 +76,18 @@ class Pipeline:
         # Transform to features
         frame_features = extract(general, self.mode)
 
-        # Store current frame
-        self.sequence.append(frame_features)
+        # Process phase and counter
+        phase = estimate_phase(self.phase_window,frame_features["elbow_angle"]) 
+        frame_features["phase"] = phase
+        complete = self.counter.update(phase)
 
-        # Give feedback
-        feedback = frame_features["coach"]
+        # Process feedback
+        feedback = give_feedback(frame_features)
+        frame_features["coach"] = feedback
         self._update_feedback(feedback)
 
-        # Update counter logic
-        phase = frame_features["phase"]
-        complete = self.counter.update(phase)
+        # Store current frame
+        self.sequence.append(frame_features)
 
         if complete:
             self._predict_sequence()
@@ -127,7 +132,6 @@ class Pipeline:
     def _update_feedback(self, feedback):
         with self.state.lock:
             self.state.feedback = feedback
-
 
     def _load_model(self):
         model_path = MODEL_2D_PATH if self.mode == 2 else MODEL_3D_PATH

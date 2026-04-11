@@ -1,6 +1,8 @@
 import numpy as np
+import pandas as pd
 
-# Main entry point
+
+# Main entry point numeric features
 def extract(pose_result, mode):
 
     # Select best side
@@ -54,18 +56,10 @@ def _extract(pose_result, side, mode):
     c = _get_point(pose_result, side, "knee", mode)
     hip_angle = _compute_angle(a, b, c, mode)
 
-    # Phase
-    phase = _estimate_phase(elbow_angle)
-
-    # Coach message
-    feedback = _give_feedback(elbow_angle, body_angle, hip_angle, phase)
-
     return {
         "elbow_angle": elbow_angle,
         "body_angle": body_angle,
         "hip_angle": hip_angle,
-        "phase": phase,
-        "coach": feedback,
     }
 
 # Math helpers
@@ -107,29 +101,22 @@ def _get_point(row, side, joint, dims):
         landmark.get("z", np.nan),
     ]
 
-# Phase helper
-def _estimate_phase(elbow_angle):
-    if np.isnan(elbow_angle):
-        return "unknown"
-    if elbow_angle < 90:
-        return "bottom"
-    if elbow_angle > 140:
-        return "top"
-    return "transition"
+# Main entry point sequence features
+def transform(sequence_df):
+    sequence_df.drop(columns=["phase"], errors="ignore", inplace=True)
 
-def _give_feedback(elbow, body, hip, phase):
-    messages = []
+    numeric_cols = sequence_df.select_dtypes(include="number").columns
+    sequence_df.loc[:, numeric_cols] = (
+        sequence_df[numeric_cols]
+        .rolling(window=5, center=True, min_periods=1)
+        .mean()
+    )
 
-    if body < 150:
-        messages.append("Back not straight")
-    if hip < 150:
-        messages.append("Hips too high")
-    if body < 135:
-        messages.append("Hips too low")
-    if elbow > 110 and phase in ["bottom", "transition"]:
-        messages.append("Not low enough")
+    X = pd.DataFrame([{
+        "elbow_mean": sequence_df["elbow_angle"].mean(),
+        "elbow_std": sequence_df["elbow_angle"].std(),
+        "body_mean": sequence_df["body_angle"].mean(),
+        "hip_mean": sequence_df["hip_angle"].mean(),
+    }])
 
-    if not messages:
-        return "Keep going"
-
-    return " | ".join(messages)
+    return X

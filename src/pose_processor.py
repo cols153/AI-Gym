@@ -4,7 +4,7 @@ import av
 import cv2
 import mediapipe as mp
 from streamlit_webrtc import VideoProcessorBase
-from src.runtime.Pipeline import Pipeline
+from Pipeline import Pipeline
 
 
 class PoseProcessor(VideoProcessorBase):
