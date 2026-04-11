@@ -30,10 +30,7 @@ class MediaPipePose:
         return self.detector.detect_for_video(mp_image, timestamp_ms)
 
     def draw(self, mp_image, detection_result):
-        return self.draw_landmarks_on_image(mp_image.numpy_view(), detection_result)
-
-    def draw_landmarks_on_image(self, rgb_image, detection_result):
-        annotated_image = np.copy(rgb_image)
+        annotated_image = np.copy(mp_image.numpy_view())
 
         pose_landmark_style = drawing_styles.get_default_pose_landmarks_style()
         pose_connection_style = drawing_utils.DrawingSpec(
