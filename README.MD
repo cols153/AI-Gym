@@ -1,4 +1,12 @@
-# AI-Gym
+<p align="center">
+  <img src="data/coach.png" alt="AI-Gym Coach" width="180">
+</p>
+
+<h1 align="center">AI-Gym</h1>
+
+<p align="center">
+  Real-time push-up coaching with MediaPipe 2D and Streamlit
+</p>
 
 AI-Gym is a Streamlit app for real-time push-up coaching using webcam-based pose detection and a MediaPipe 2D classification pipeline.
 
