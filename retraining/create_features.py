@@ -26,11 +26,11 @@ VIDEO_EXTENSIONS = (".mp4", ".mov", ".avi", ".mkv", ".m4v")
 
 
 class FeatureCollectorPipeline(Pipeline):
-    def __init__(self, mode, state):
+    def __init__(self, state):
         self.video_id: str | None = None
         self.label: str | None = None
         self.rep_rows: list[dict] = []
-        super().__init__(mode=mode, state=state)
+        super().__init__(state=state)
 
     def _predict_sequence(self):
         X = transform(pd.DataFrame(self.sequence))
@@ -52,7 +52,7 @@ class FeatureCollectorPipeline(Pipeline):
 class FeatureCollectorProcessor(PoseProcessor):
     def _ensure_pipeline(self):
         if self.pipe is None:
-            self.pipe = FeatureCollectorPipeline(mode=self.mode, state=self.state)
+            self.pipe = FeatureCollectorPipeline(state=self.state)
 
 
 def run_video_collect_features(path: str, label: str) -> list[dict]:

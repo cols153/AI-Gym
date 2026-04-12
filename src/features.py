@@ -3,13 +3,13 @@ import pandas as pd
 
 
 # Main entry point numeric features
-def extract(pose_result, mode):
+def extract(pose_result):
 
     # Select best side
     side = _choose_body_side(pose_result)
     
     # Extract features    
-    features = _extract(pose_result, side, mode)
+    features = _extract(pose_result, side)
 
     return features
 
@@ -36,25 +36,25 @@ def _get_visibility(pose_result, side, joints):
     return float(np.mean(vals))
 
 # Helper extract features
-def _extract(pose_result, side, mode):
+def _extract(pose_result, side):
     
     # Elbow
-    a = _get_point(pose_result, side, "shoulder", mode)
-    b = _get_point(pose_result, side, "elbow", mode)
-    c = _get_point(pose_result, side, "wrist", mode)
-    elbow_angle = _compute_angle(a, b, c, mode)
+    a = _get_point(pose_result, side, "shoulder")
+    b = _get_point(pose_result, side, "elbow")
+    c = _get_point(pose_result, side, "wrist")
+    elbow_angle = _compute_angle(a, b, c)
 
     # Body alignment
-    a = _get_point(pose_result, side, "shoulder", mode)
-    b = _get_point(pose_result, side, "hip", mode)
-    c = _get_point(pose_result, side, "ankle", mode)
-    body_angle = _compute_angle(a, b, c, mode)
+    a = _get_point(pose_result, side, "shoulder")
+    b = _get_point(pose_result, side, "hip")
+    c = _get_point(pose_result, side, "ankle")
+    body_angle = _compute_angle(a, b, c)
 
     # Hip
-    a = _get_point(pose_result, side, "shoulder", mode)
-    b = _get_point(pose_result, side, "hip", mode)
-    c = _get_point(pose_result, side, "knee", mode)
-    hip_angle = _compute_angle(a, b, c, mode)
+    a = _get_point(pose_result, side, "shoulder")
+    b = _get_point(pose_result, side, "hip")
+    c = _get_point(pose_result, side, "knee")
+    hip_angle = _compute_angle(a, b, c)
 
     return {
         "elbow_angle": elbow_angle,
@@ -63,10 +63,10 @@ def _extract(pose_result, side, mode):
     }
 
 # Math helpers
-def _compute_angle(a, b, c, dims):
-    a = np.array(a[:dims], dtype=float)
-    b = np.array(b[:dims], dtype=float)
-    c = np.array(c[:dims], dtype=float)
+def _compute_angle(a, b, c):
+    a = np.array(a, dtype=float)
+    b = np.array(b, dtype=float)
+    c = np.array(c, dtype=float)
 
     # Check for invalid input
     if np.isnan(a).any() or np.isnan(b).any() or np.isnan(c).any():
@@ -86,20 +86,13 @@ def _compute_angle(a, b, c, dims):
 
     return np.degrees(np.arccos(cosine))
 
-def _get_point(row, side, joint, dims):
+def _get_point(row, side, joint):
     landmark = row.get(f"{side}_{joint}")
 
     if landmark is None:
         return None
 
-    if dims == 2:
-        return [landmark.get("x", np.nan), landmark.get("y", np.nan)]
-
-    return [
-        landmark.get("x", np.nan),
-        landmark.get("y", np.nan),
-        landmark.get("z", np.nan),
-    ]
+    return [landmark.get("x", np.nan), landmark.get("y", np.nan)]
 
 # Main entry point sequence features
 def transform(sequence_df):

@@ -12,11 +12,9 @@ from src.coach import estimate_phase, give_feedback
 
 
 MODEL_2D_PATH = "data/models/pushup_2d.joblib"
-MODEL_3D_PATH = "data/models/pushup_3d.joblib"
 
 class Pipeline:
-    def __init__(self, mode, state):
-        self.mode = mode
+    def __init__(self, state):
         self.state = state
 
         # internal
@@ -63,7 +61,7 @@ class Pipeline:
             return
   
         # Transform to features
-        frame_features = extract(general, self.mode)
+        frame_features = extract(general)
 
         # Process phase and counter
         phase = estimate_phase(self.phase_window,frame_features["elbow_angle"]) 
@@ -128,8 +126,7 @@ class Pipeline:
             self.state.feedback = feedback
 
     def _load_model(self):
-        model_path = MODEL_2D_PATH if self.mode == 2 else MODEL_3D_PATH
-        return joblib.load(model_path)
+        return joblib.load(MODEL_2D_PATH)
     
     def _to_landmarks(self, result):
         if result is None or not result.pose_landmarks:

@@ -8,17 +8,16 @@ from src.Pipeline import Pipeline
 
 
 class PoseProcessor(VideoProcessorBase):
-    def __init__(self, pose, state, mode=2):
+    def __init__(self, pose, state):
         self.pose = pose
         self.state = state
-        self.mode = mode
 
         # Lazy init
         self.pipe = None
 
     def _ensure_pipeline(self):
         if self.pipe is None:
-            self.pipe = Pipeline(mode=self.mode, state=self.state)
+            self.pipe = Pipeline(state=self.state)
 
     def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
         # Ensure pipeline is loaded only when needed
