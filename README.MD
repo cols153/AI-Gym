@@ -1,15 +1,9 @@
 # AI-Gym
 
 This repository contains:
-- a real-time Streamlit application (AI-Gym)
-- an offline pipeline for model development (posture_checker_offline)
+- A Streamlit app for real-time push-up coaching using webcam-based pose detection.
+- An offline pipeline for model development (posture_checker_offline)
 
-
-A Streamlit app for real-time push-up coaching using webcam-based pose detection.
-
-- **`MediaPipePose`** = pose detection logic
-- **`PoseProcessor`** = handles webcam frames in Streamlit
-- **`LiveState`** = shared runtime state / values
 
 ## Setup
 

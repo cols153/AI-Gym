@@ -24,3 +24,16 @@ class State:
                 "feedback": self.feedback,
                 "history": list(self.history),
             }
+        
+    def __str__(self):
+        snap = self.snapshot()
+        return (
+            f"State("
+            f"reps={snap['reps']}, "
+            f"correct={snap['correct_reps']}, "
+            f"incorrect={snap['incorrect_reps']}, "
+            f"status={snap['status']}, "
+            f"conf={snap['confidence']}, "
+            f"feedback='{snap['feedback']}'"
+            f")"
+        )

@@ -5,9 +5,9 @@ import pandas as pd
 import numpy as np
 from collections import deque
 
-from Counter import Counter
-from features import extract, transform
-from coach import estimate_phase, give_feedback
+from src.Counter import Counter
+from src.features import extract, transform
+from src.coach import estimate_phase, give_feedback
 
 
 MODEL_2D_PATH = "data/models/pushup_2d.joblib"
@@ -104,11 +104,12 @@ class Pipeline:
 
         # Predict
         pred = self.model.predict(X)
+        pred_label = str(pred[0])
         proba = self.model.predict_proba(X)
         confidence = float(max(proba[0]))
 
         # Update
-        self._update_state(pred_label=str(pred), confidence=confidence)
+        self._update_state(pred_label=pred_label, confidence=confidence)
 
     def _update_state(self, pred_label, confidence=None):
         with self.state.lock:
