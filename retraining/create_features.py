@@ -64,7 +64,7 @@ def run_video_collect_features(path: str, label: str) -> list[dict]:
     if processor.pipe is None:
         return []
 
-    processor.pipe.video_id = os.path.basename(path)
+    processor.pipe.video_id = Path(path).name
     processor.pipe.label = label
 
     cap = cv2.VideoCapture(path)

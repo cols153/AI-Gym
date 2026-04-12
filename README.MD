@@ -32,6 +32,20 @@ http://localhost:8501
 
 Allow webcam access when prompted.
 
+## Retraining Workflow
+
+Generate a new feature dataset from the raw videos:
+
+`.\venv\Scripts\python.exe retraining\create_features.py`
+
+Train a new 2D MediaPipe model from the generated feature CSV:
+
+`.\venv\Scripts\python.exe retraining\training.py --model-output data/models/pushup_2d.joblib`
+
+Run the filtered video-based evaluation on videos where at least one rep was detected:
+
+`.\venv\Scripts\python.exe -m pytest retraining\test_runner.py -s`
+
 ## Notes
 
 - Python 3.10 is required (compatibility with streamlit-webrtc)

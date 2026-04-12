@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 
@@ -42,7 +41,7 @@ def run_video(path):
     state = State()
     processor = PoseProcessor(pose=pose, state=state)
 
-    cap = cv2.VideoCapture(path)
+    cap = cv2.VideoCapture(str(path))
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -58,7 +57,7 @@ def run_video(path):
 
 @pytest.mark.parametrize("filename", CORRECT_FILES)
 def test_correct_videos(filename):
-    snap = run_video(os.path.join(CORRECT_DIR, filename))
+    snap = run_video(CORRECT_DIR / filename)
 
     assert snap["incorrect_reps"] == 0
     assert snap["correct_reps"] > 0
@@ -66,6 +65,6 @@ def test_correct_videos(filename):
 
 @pytest.mark.parametrize("filename", INCORRECT_FILES)
 def test_incorrect_videos(filename):
-    snap = run_video(os.path.join(INCORRECT_DIR, filename))
+    snap = run_video(INCORRECT_DIR / filename)
 
     assert snap["incorrect_reps"] > 0

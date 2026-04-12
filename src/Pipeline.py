@@ -6,24 +6,13 @@ import numpy as np
 from collections import deque
 
 from src.Counter import Counter
+from src.constants import LANDMARK_NAMES
 from src.features import extract, transform
 from src.coach import estimate_phase, give_feedback
 
 
 MODEL_2D_PATH = "data/models/pushup_2d.joblib"
 MODEL_3D_PATH = "data/models/pushup_3d.joblib"
-
-LANDMARK_NAMES = [
-    "nose", "left_eye_inner", "left_eye", "left_eye_outer",
-    "right_eye_inner", "right_eye", "right_eye_outer",
-    "left_ear", "right_ear", "mouth_left", "mouth_right",
-    "left_shoulder", "right_shoulder", "left_elbow", "right_elbow",
-    "left_wrist", "right_wrist", "left_pinky", "right_pinky",
-    "left_index", "right_index", "left_thumb", "right_thumb",
-    "left_hip", "right_hip", "left_knee", "right_knee",
-    "left_ankle", "right_ankle", "left_heel", "right_heel",
-    "left_foot_index", "right_foot_index",
-]
 
 class Pipeline:
     def __init__(self, mode, state):
@@ -94,8 +83,12 @@ class Pipeline:
             self.sequence.clear()
   
     def stop(self):
-        # Reset counter, state, pipe
-        pass
+        self._stop_event.set()
+        self.sequence.clear()
+        self.counter.reset()
+        self.phase_window.clear()
+        if self._worker.is_alive():
+            self._worker.join(timeout=1)
 
     def _predict_sequence(self):
         
