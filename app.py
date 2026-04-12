@@ -94,7 +94,7 @@ with center:
 
 with right:
     with st.container(border=True):
-        st.markdown("<p style='text-align: center;'>Repetitions</p>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center;'>Scoreboard</p>", unsafe_allow_html=True)
 
         m1, m2 = st.columns(2)
 
@@ -106,5 +106,9 @@ with right:
 
         correct_box.metric("Correct", 0)
         incorrect_box.metric("Incorrect", 0)
+
+    if st.button("Clear session", use_container_width=True):
+        st.session_state.live_state = State()
+        st.rerun()
 
     live_metrics()
