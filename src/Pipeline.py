@@ -11,7 +11,7 @@ from src.features import extract, transform
 from src.coach import estimate_phase, give_feedback
 
 
-MODEL_2D_PATH = "data/models/pushup_2d.joblib"
+MODEL_PATH = "posture_checker_offline/models/mlp_pipeline_mediapipe_2d_tuned.joblib"
 
 class Pipeline:
     def __init__(self, state):
@@ -126,7 +126,7 @@ class Pipeline:
             self.state.feedback = feedback
 
     def _load_model(self):
-        return joblib.load(MODEL_2D_PATH)
+        return joblib.load(MODEL_PATH)
     
     def _to_landmarks(self, result):
         if result is None or not result.pose_landmarks:
